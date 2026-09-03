@@ -14,12 +14,11 @@
         
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #E5E7EB; /* Darker gray for desktop background */
+            background-color: #E5E7EB; 
         }
         
-        /* Mobile App Container styles */
         .app-container {
-            background-color: #F4F6F9; /* Off-white app background */
+            background-color: #F4F6F9;
             min-height: 100vh;
         }
 
@@ -38,7 +37,6 @@
             100% { transform: translateX(-100%); }
         }
 
-        /* Hide scrollbar for a cleaner app look */
         ::-webkit-scrollbar {
             width: 0px;
             background: transparent;
@@ -47,20 +45,17 @@
 </head>
 <body class="flex items-center justify-center">
 
-    <!-- Mobile Frame (Restricts width on desktop, full width on mobile) -->
-    <div class="app-container w-full max-w-md relative overflow-x-hidden shadow-2xl sm:min-h-[850px] sm:my-8 sm:rounded-[40px] sm:border-[8px] sm:border-gray-900 pb-24">
+    <div class="app-container w-full max-w-md relative overflow-x-hidden shadow-2xl sm:min-h-[850px] sm:my-8 sm:rounded-[40px] sm:border-[8px] sm:border-gray-200 sm:outline sm:outline-8 sm:outline-gray-100 pb-24">
         
         <!-- TOP HEADER -->
         <div class="flex justify-between items-center px-5 pt-8 pb-2">
             <div class="flex items-center gap-4">
-                <i class="fas fa-bars text-blue-600 text-xl cursor-pointer"></i>
+                <i class="fas fa-bars text-blue-500 text-xl cursor-pointer"></i>
                 <div>
                     <h1 class="font-extrabold text-gray-900 text-xl tracking-tight">FeverDose</h1>
-                    <p class="text-[10px] text-gray-500 font-semibold">Hi, Guest User • Kids: amit</p>
+                    <p class="text-[10px] text-gray-500 font-semibold">Hi, Offline Parent</p>
                 </div>
             </div>
-            
-            <!-- Top Right Action Icons -->
             <div class="flex gap-4 text-blue-700 bg-white shadow-sm px-4 py-2 rounded-2xl items-center">
                 <i class="fas fa-share-nodes cursor-pointer"></i>
                 <i class="fas fa-moon cursor-pointer"></i>
@@ -69,110 +64,101 @@
             </div>
         </div>
 
-        <!-- PURPLE WELCOME BANNER -->
+        <!-- PURPLE WELCOME BANNER (Now scrolling like the screenshot) -->
         <div class="px-5 mt-4">
-            <div class="bg-[#EADDFF] rounded-xl py-3 px-4 flex justify-between items-center opacity-90">
-                <span class="font-bold text-gray-900 text-sm">Stay healthy and safe.</span>
-                <span class="font-bold text-gray-900 text-sm">Welcome</span>
+            <div class="bg-[#F3E8FF] rounded-xl py-3 px-4 overflow-hidden flex items-center opacity-90">
+                <div class="marquee-container">
+                    <div class="animate-marquee font-bold text-gray-900 text-sm tracking-wide">
+                        Welcome to Fever Dose Calculator! Stay healthy and safe. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Welcome to Fever Dose Calculator! Stay healthy and safe.
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- SCROLLING MARQUEE BANNER -->
+        <!-- SCROLLING MARQUEE BANNER (Firebase Synced) -->
         <div class="marquee-container mt-4 mb-2">
-            <div class="animate-marquee font-bold text-gray-900 text-[15px] tracking-wide">
-                Connected to Firebase, but NewJoin folder is empty...
+            <div id="newJoinBanner" class="animate-marquee font-extrabold text-gray-800 text-[15px] tracking-wide">
+                Connecting to Firebase...
             </div>
         </div>
 
         <!-- GREETING -->
         <div class="px-5 mt-6">
-            <p class="text-gray-500 text-sm font-semibold tracking-wide">Good Morning,</p>
-            <h2 class="text-[32px] font-black text-[#111827] -mt-1 tracking-tight">Guest User</h2>
+            <p class="text-gray-500 text-sm font-semibold tracking-wide" id="timeGreeting">Good Afternoon,</p>
+            <h2 class="text-[32px] font-black text-[#111827] -mt-1 tracking-tight">Offline Parent</h2>
         </div>
 
-        <!-- QUICK LINKS (CIRCULAR BUTTONS) -->
+        <!-- QUICK LINKS -->
         <div class="flex justify-between px-6 mt-6">
-            <!-- App Button -->
             <div class="flex flex-col items-center gap-2 cursor-pointer transition-transform active:scale-95">
                 <div class="w-[60px] h-[60px] rounded-full bg-[#E91E63] flex items-center justify-center shadow-md text-white text-2xl">
                     <i class="fas fa-grip"></i>
                 </div>
-                <span class="text-[11px] font-bold text-gray-900">https://</span>
+                <span class="text-[11px] font-bold text-gray-900">New App</span>
             </div>
-            <!-- Articles Button -->
             <div class="flex flex-col items-center gap-2 cursor-pointer transition-transform active:scale-95">
                 <div class="w-[60px] h-[60px] rounded-full bg-[#4CAF50] flex items-center justify-center shadow-md text-white text-2xl">
                     <i class="fas fa-file-lines"></i>
                 </div>
                 <span class="text-[11px] font-bold text-gray-900">Articles</span>
             </div>
-            <!-- Videos Button -->
             <div class="flex flex-col items-center gap-2 cursor-pointer transition-transform active:scale-95">
                 <div class="w-[60px] h-[60px] rounded-full bg-[#FF9800] flex items-center justify-center shadow-md text-white text-2xl pl-1">
                     <i class="fas fa-play"></i>
                 </div>
                 <span class="text-[11px] font-bold text-gray-900">Videos</span>
             </div>
-            <!-- Appointment Button -->
             <div class="flex flex-col items-center gap-2 cursor-pointer transition-transform active:scale-95">
                 <div class="w-[60px] h-[60px] rounded-full bg-[#1976D2] flex items-center justify-center shadow-md text-white text-2xl">
                     <i class="fas fa-calendar-check"></i>
                 </div>
-                <span class="text-[11px] font-bold text-gray-900">Appointment</span>
+                <span class="text-[11px] font-bold text-gray-900">Dr.Appointme</span>
             </div>
         </div>
 
         <!-- SCHEDULE CARD -->
         <div class="px-5 mt-8">
             <div class="bg-white rounded-[24px] p-4 flex items-center shadow-[0_4px_20px_rgba(0,0,0,0.03)] cursor-pointer">
-                <!-- Date Box -->
                 <div class="bg-[#F0F7FF] text-[#1976D2] rounded-2xl w-14 h-14 flex flex-col items-center justify-center">
-                    <span class="text-[9px] font-black uppercase tracking-widest mt-1">Sept</span>
-                    <span class="text-[22px] font-black leading-none mb-1">2</span>
+                    <span class="text-[9px] font-black uppercase tracking-widest mt-1" id="currentMonth">SEPT</span>
+                    <span class="text-[22px] font-black leading-none mb-1" id="currentDay">2</span>
                 </div>
-                <!-- Details -->
                 <div class="ml-5">
-                    <h3 class="font-bold text-gray-900 text-[15px]">Wednesday Schedule</h3>
-                    <p class="text-xs text-gray-500 font-semibold mt-0.5">Manage 1 alerts</p>
+                    <h3 class="font-bold text-gray-900 text-[15px]" id="currentDayName">Wednesday Schedule</h3>
+                    <p class="text-xs text-gray-400 font-medium mt-0.5">No upcoming doses configured</p>
                 </div>
             </div>
         </div>
 
-        <!-- NEW DOSE CALCULATION HERO CARD -->
+        <!-- NEW DOSE CALCULATION -->
         <div class="px-5 mt-6 relative mb-8">
             <div class="bg-[#1976D2] rounded-[28px] p-7 relative overflow-hidden shadow-xl cursor-pointer">
-                
-                <!-- Decorative translucent circles -->
                 <div class="absolute -right-8 -top-8 w-40 h-40 bg-white/10 rounded-full"></div>
                 <div class="absolute right-[-10%] bottom-[-30%] w-64 h-64 bg-white/10 rounded-full"></div>
                 
-                <!-- Content -->
                 <h3 class="text-[22px] font-bold text-white relative z-10 mb-2">New Dose Calculation</h3>
                 <p class="text-blue-100 text-[13px] font-medium relative z-10 mb-8 max-w-[85%] leading-relaxed">
                     Precisely calculate medicine based on weight and standard medical formulas.
                 </p>
                 
-                <!-- Action Button -->
-                <button class="bg-white text-[#1976D2] font-extrabold rounded-full px-7 py-3 text-sm relative z-10 shadow-sm transition-transform active:scale-95">
-                    Start Now
-                </button>
+                <a href="calculator.html">
+                    <button class="bg-white text-[#1976D2] font-extrabold rounded-full px-7 py-3 text-sm relative z-10 shadow-sm transition-transform active:scale-95">
+                        Start Now
+                    </button>
+                </a>
             </div>
             
-            <!-- Chat FAB (Floating Action Button) over the card -->
-            <div class="absolute -bottom-3 right-8 bg-[#1976D2] text-white w-12 h-12 rounded-[14px] flex items-center justify-center shadow-lg border-[3px] border-[#F4F6F9] cursor-pointer hover:bg-blue-700 transition-colors">
-                <i class="fas fa-message text-lg"></i>
+            <div class="absolute -bottom-3 right-8 bg-[#1976D2] text-white w-14 h-14 rounded-[16px] flex items-center justify-center shadow-lg border-[4px] border-[#F4F6F9] cursor-pointer hover:bg-blue-700 transition-colors">
+                <i class="fas fa-comment-alt text-xl"></i>
             </div>
         </div>
 
         <!-- BOTTOM NAVIGATION BAR -->
         <div class="absolute bottom-0 w-full bg-white border-t border-gray-100 px-6 py-4 flex justify-between items-center sm:rounded-b-[32px] shadow-[0_-10px_40px_rgba(0,0,0,0.05)] z-50">
-            <!-- Active Tab (Home) -->
             <div class="flex flex-col items-center text-[#1976D2] bg-[#F0F7FF] px-5 py-2 rounded-full cursor-pointer">
                 <i class="fas fa-house mb-1 text-lg"></i>
                 <span class="text-[10px] font-bold">Home</span>
             </div>
-            
-            <!-- Inactive Tabs -->
             <div class="flex flex-col items-center text-gray-400 hover:text-gray-600 cursor-pointer transition-colors">
                 <i class="fas fa-calculator mb-1 text-xl"></i>
                 <span class="text-[10px] font-bold">Calculate</span>
@@ -193,5 +179,79 @@
 
     </div>
 
+    <!-- FIREBASE & LOGIC SCRIPT -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+        import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+
+        // TODO: ADD YOUR WEB APP ID FROM FIREBASE CONSOLE HERE
+        const firebaseConfig = {
+            apiKey: "AIzaSyAVuW1T0u_DwROv7srGmTOOqFIMwboPMrQ",
+            authDomain: "fever-dose-calculator.firebaseapp.com",
+            projectId: "fever-dose-calculator",
+            storageBucket: "fever-dose-calculator.firebasestorage.app",
+            messagingSenderId: "1092790983793",
+            appId: "YOUR_WEB_APP_ID" 
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const bannerElement = document.getElementById("newJoinBanner");
+
+        onSnapshot(collection(db, "NewJoin"), (snapshot) => {
+            if (snapshot.empty) {
+                bannerElement.innerText = "Connected to Firebase, but NewJoin folder is empty!";
+                return;
+            }
+            
+            let allNames = [];
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                let nameText = data.name;
+                
+                if (!nameText) {
+                    for (const key in data) {
+                        if (typeof data[key] === 'string' && data[key].trim() !== '') {
+                            nameText = data[key];
+                            break;
+                        }
+                    }
+                }
+                
+                if (nameText) {
+                    let cleaned = nameText.replace(/"/g, "").replace(/\[/g, "").replace(/\]/g, "").trim();
+                    if (cleaned.length > 0) {
+                        allNames.push(cleaned);
+                    }
+                }
+            });
+            
+            if (allNames.length > 0) {
+                let joinedText = allNames.join(" • ");
+                // Repeating the text so the marquee never looks empty on wide screens
+                bannerElement.innerText = `${joinedText}        •        ${joinedText}        •        ${joinedText}`;
+            } else {
+                bannerElement.innerText = "NewJoin found, but 'name' field is missing or empty";
+            }
+        }, (error) => {
+            console.error("Error fetching NewJoin: ", error);
+            bannerElement.innerText = "Firebase Error: " + error.message;
+        });
+
+        // Dynamic Date & Time Greeting Logic
+        const date = new Date();
+        const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+        const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        
+        document.getElementById('currentMonth').innerText = months[date.getMonth()];
+        document.getElementById('currentDay').innerText = date.getDate();
+        document.getElementById('currentDayName').innerText = days[date.getDay()] + " Schedule";
+
+        const hour = date.getHours();
+        let greetingText = "Good Evening,";
+        if (hour < 12) greetingText = "Good Morning,";
+        else if (hour < 17) greetingText = "Good Afternoon,";
+        document.getElementById('timeGreeting').innerText = greetingText;
+    </script>
 </body>
 </html>
