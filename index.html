@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fever Dose Calculator</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f3f4f6; }
+        @media print {
+            body { background: #fff; }
+            #calcForm, .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white rounded-3xl shadow-xl w-full max-w-md p-6 border-t-8 border-blue-500">
+
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-6">
+            <h1 class="text-2xl font-extrabold text-gray-800">Fever Dose <span class="text-blue-500">Calculator</span></h1>
+            <i class="fas fa-stethoscope text-3xl text-blue-100"></i>
+        </div>
+        <p class="text-xs text-gray-500 mb-6 font-semibold tracking-wide uppercase">Weight-based reference dosing. Not a substitute for medical advice.</p>
+
+        <!-- Calculator Form -->
+        <form id="calcForm" class="space-y-5">
+            <!-- Child Name -->
+            <div>
+                <label for="childName" class="block text-sm font-semibold text-gray-700 mb-1">Child Name</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-user text-blue-500"></i>
+                    </div>
+                    <input type="text" id="childName" required maxlength="60" class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition outline-none" placeholder="Enter child's name">
+                </div>
+            </div>
+
+            <!-- Weight -->
+            <div>
+                <label for="childWeight" class="block text-sm font-semibold text-gray-700 mb-1">Child Weight (kg)</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-weight-scale text-blue-500"></i>
+                    </div>
+                    <input type="number" id="childWeight" step="0.1" min="1" max="60" required class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition outline-none" placeholder="e.g., 12.5">
+                </div>
+                <p id="weightError" class="hidden text-xs font-semibold text-red-500 mt-1">Enter a realistic child weight between 1 and 60 kg.</p>
+            </div>
+
+            <!-- Medicine Dropdown -->
+            <div>
+                <label for="medicine" class="block text-sm font-semibold text-gray-700 mb-1">Medication Type</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-prescription-bottle-medical text-blue-500"></i>
+                    </div>
+                    <select id="medicine" class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-gray-700 font-semibold outline-none appearance-none">
+                        <option value="para_120_5">Paracetamol Syrup (120mg/5mL)</option>
+                        <option value="para_250_5">Paracetamol Syrup (250mg/5mL)</option>
+                        <option value="para_500_5">Paracetamol Syrup (500mg/5mL)</option>
+                        <option value="para_drops_100_1">Paracetamol Drops (100mg/1mL)</option>
+                        <option value="ibu_100_5">Ibuprofen Syrup (100mg/5mL)</option>
+                        <option value="ibu_200_5">Ibuprofen Syrup (200mg/5mL)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-lg py-4 rounded-xl shadow-lg transition-transform transform active:scale-95">
+                Calculate Dosage
+            </button>
+        </form>
+
+        <!-- Results Card (Hidden by default) -->
+        <div id="resultCard" class="hidden mt-8 bg-blue-50 rounded-2xl border-2 border-blue-200 p-6 text-center">
+            <h2 class="text-xs font-black text-gray-500 tracking-widest uppercase mb-4">Recommended Dosage for <span id="resName" class="text-blue-600"></span></h2>
+
+            <div class="flex items-end justify-center gap-1 mb-2">
+                <span id="resMl" class="text-5xl font-black text-blue-600 tracking-tighter"></span>
+                <span id="resUnit" class="text-2xl font-bold text-blue-600 mb-1">mL</span>
+            </div>
+
+            <p class="text-sm font-bold text-gray-600 mb-2">Equates to <span id="resMg"></span> mg</p>
+
+            <p id="capNotice" class="hidden text-xs font-bold text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-4">
+                <i class="fas fa-triangle-exclamation mr-1"></i><span id="capNoticeText"></span>
+            </p>
+
+            <div class="bg-white/70 rounded-xl p-3 text-sm font-semibold text-gray-800 flex items-center gap-3 text-left">
+                <i class="fas fa-lightbulb text-yellow-500 text-lg"></i>
+                <span id="resInstructions"></span>
+            </div>
+
+            <button id="printBtn" class="no-print mt-4 text-xs font-bold text-blue-500 hover:text-blue-700 transition">
+                <i class="fas fa-print mr-1"></i>Print / save this result
+            </button>
+        </div>
+
+        <!-- Disclaimer -->
+        <p class="text-[10px] text-gray-400 text-center mt-6 leading-tight">
+            Disclaimer: This tool provides a reference estimate only, based on standard weight-based dosing formulas and published maximum-dose limits. Always verify actual medicine concentration (mg/mL) against your container's label, and consult a doctor or pharmacist before giving any medication — especially for infants under 3 months, children with health conditions, or if you are unsure.
+        </p>
+    </div>
+
+    <!-- Application Logic -->
+    <script>
+        // Central config: per-mL strength, dose per kg, and published max single dose (mg).
+        // Max dose figures reflect commonly cited pediatric ceilings and are a safety
+        // backstop on top of the weight calc, not a replacement for label/physician guidance.
+        const MEDICINES = {
+            para_120_5:       { label: 'Paracetamol Syrup (120mg/5mL)', strengthMg: 120, strengthMl: 5, doseMgPerKg: 15, maxSingleMg: 500,  freq: 'Give every 4 to 6 hours. Maximum 4 doses a day.' },
+            para_250_5:       { label: 'Paracetamol Syrup (250mg/5mL)', strengthMg: 250, strengthMl: 5, doseMgPerKg: 15, maxSingleMg: 500,  freq: 'Give every 4 to 6 hours. Maximum 4 doses a day.' },
+            para_500_5:       { label: 'Paracetamol Syrup (500mg/5mL)', strengthMg: 500, strengthMl: 5, doseMgPerKg: 15, maxSingleMg: 500,  freq: 'Give every 4 to 6 hours. Maximum 4 doses a day.' },
+            para_drops_100_1: { label: 'Paracetamol Drops (100mg/1mL)', strengthMg: 100, strengthMl: 1, doseMgPerKg: 15, maxSingleMg: 500,  freq: 'Give every 4 to 6 hours. Maximum 4 doses a day.' },
+            ibu_100_5:        { label: 'Ibuprofen Syrup (100mg/5mL)',   strengthMg: 100, strengthMl: 5, doseMgPerKg: 10, maxSingleMg: 400,  freq: 'Give every 6 to 8 hours. Maximum 3 to 4 doses a day.' },
+            ibu_200_5:        { label: 'Ibuprofen Syrup (200mg/5mL)',   strengthMg: 200, strengthMl: 5, doseMgPerKg: 10, maxSingleMg: 400,  freq: 'Give every 6 to 8 hours. Maximum 3 to 4 doses a day.' },
+        };
+
+        const form = document.getElementById('calcForm');
+        const weightInput = document.getElementById('childWeight');
+        const weightError = document.getElementById('weightError');
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const name = document.getElementById('childName').value.trim();
+            const weight = parseFloat(weightInput.value);
+            const medicineKey = document.getElementById('medicine').value;
+            const med = MEDICINES[medicineKey];
+
+            // Basic sanity check on weight before calculating anything.
+            if (!weight || weight < 1 || weight > 60) {
+                weightError.classList.remove('hidden');
+                document.getElementById('resultCard').classList.add('hidden');
+                return;
+            }
+            weightError.classList.add('hidden');
+
+            // Weight-based dose, then apply the published max single-dose ceiling.
+            const rawMg = weight * med.doseMgPerKg;
+            const cappedMg = Math.min(rawMg, med.maxSingleMg);
+            const wasCapped = rawMg > med.maxSingleMg;
+
+            const totalMl = (cappedMg / med.strengthMg) * med.strengthMl;
+
+            const roundedMg = Math.round(cappedMg * 100) / 100;
+            const roundedMl = Math.round(totalMl * 100) / 100;
+
+            // Render results (textContent throughout — no injected HTML).
+            document.getElementById('resName').textContent = name || 'this child';
+            document.getElementById('resMl').textContent = roundedMl;
+            document.getElementById('resUnit').textContent = 'mL';
+            document.getElementById('resMg').textContent = roundedMg;
+            document.getElementById('resInstructions').textContent = med.freq;
+
+            const capNotice = document.getElementById('capNotice');
+            if (wasCapped) {
+                document.getElementById('capNoticeText').textContent =
+                    `Weight-based calculation exceeded the standard max single dose (${med.maxSingleMg}mg), so the dose shown has been capped at that limit.`;
+                capNotice.classList.remove('hidden');
+            } else {
+                capNotice.classList.add('hidden');
+            }
+
+            document.getElementById('resultCard').classList.remove('hidden');
+            document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+
+        document.getElementById('printBtn').addEventListener('click', () => window.print());
+    </script>
+</body>
+</html>
