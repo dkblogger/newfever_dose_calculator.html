@@ -4,73 +4,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FeverDose App</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome for Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- Google Fonts -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #E5E7EB; }
+        .app-container { background-color: #F4F6F9; min-height: 100vh; overflow-x: hidden; }
+        .marquee-container { overflow: hidden; white-space: nowrap; width: 100%; }
+        .animate-marquee { display: inline-block; animation: marquee 15s linear infinite; }
+        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
         
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #E5E7EB; 
+        /* Toast Animation */
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translate(-50%, 10px) scale(0.95); }
+            10% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+            90% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -10px) scale(0.95); }
         }
-        
-        .app-container {
-            background-color: #F4F6F9;
-            min-height: 100vh;
-        }
-
-        /* Marquee Animation */
-        .marquee-container {
-            overflow: hidden;
-            white-space: nowrap;
-            width: 100%;
-        }
-        .animate-marquee {
-            display: inline-block;
-            animation: marquee 15s linear infinite;
-        }
-        @keyframes marquee {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
-
-        ::-webkit-scrollbar {
-            width: 0px;
-            background: transparent;
-        }
+        .toast-anim { animation: fadeInOut 2.5s forwards; }
     </style>
 </head>
 <body class="flex items-center justify-center">
 
-    <div class="app-container w-full max-w-md relative overflow-x-hidden shadow-2xl sm:min-h-[850px] sm:my-8 sm:rounded-[40px] sm:border-[8px] sm:border-gray-200 sm:outline sm:outline-8 sm:outline-gray-100">
+    <div class="app-container w-full max-w-md relative shadow-2xl sm:min-h-[850px] sm:my-8 sm:rounded-[40px] sm:border-[8px] sm:border-gray-200 sm:outline sm:outline-8 sm:outline-gray-100">
         
+        <!-- TOAST NOTIFICATION POPUP -->
+        <div id="toast" class="hidden absolute top-24 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-5 py-3 rounded-full shadow-2xl text-sm font-bold z-50 flex items-center gap-2 whitespace-nowrap">
+            <i class="fas fa-circle-info text-blue-400"></i>
+            <span id="toastMsg">Action triggered!</span>
+        </div>
+
         <!-- ========================================== -->
         <!-- SCREEN 1: DASHBOARD                        -->
         <!-- ========================================== -->
-        <div id="dashboardScreen" class="pb-24 block fade-in">
+        <div id="dashboardScreen" class="screen-view block pb-24">
             <!-- TOP HEADER -->
             <div class="flex justify-between items-center px-5 pt-8 pb-2">
                 <div class="flex items-center gap-4">
-                    <i class="fas fa-bars text-blue-500 text-xl cursor-pointer"></i>
+                    <i onclick="showToast('Menu opened')" class="fas fa-bars text-blue-500 text-xl cursor-pointer hover:scale-110 transition"></i>
                     <div>
                         <h1 class="font-extrabold text-gray-900 text-xl tracking-tight">FeverDose</h1>
                         <p class="text-[10px] text-gray-500 font-semibold">Hi, Offline Parent</p>
                     </div>
                 </div>
                 <div class="flex gap-4 text-blue-700 bg-white shadow-sm px-4 py-2 rounded-2xl items-center">
-                    <i class="fas fa-share-nodes cursor-pointer"></i>
-                    <i class="fas fa-moon cursor-pointer"></i>
-                    <i class="fas fa-cloud cursor-pointer text-gray-400"></i>
-                    <i class="fas fa-arrow-right-from-bracket text-red-500 cursor-pointer"></i>
+                    <i onclick="showToast('Share menu opened')" class="fas fa-share-nodes cursor-pointer hover:scale-110 transition"></i>
+                    <i onclick="showToast('Dark mode coming soon!')" class="fas fa-moon cursor-pointer hover:scale-110 transition"></i>
+                    <i onclick="showToast('Syncing with Cloud...')" class="fas fa-cloud cursor-pointer text-gray-400 hover:scale-110 transition hover:text-blue-500"></i>
+                    <i onclick="showToast('Logging out...')" class="fas fa-arrow-right-from-bracket text-red-500 cursor-pointer hover:scale-110 transition"></i>
                 </div>
             </div>
 
             <!-- PURPLE WELCOME BANNER -->
             <div class="px-5 mt-4">
-                <div class="bg-[#F3E8FF] rounded-xl py-3 px-4 overflow-hidden flex items-center opacity-90">
+                <div class="bg-[#F3E8FF] rounded-xl py-3 px-4 overflow-hidden flex items-center opacity-90 shadow-sm">
                     <div class="marquee-container">
                         <div class="animate-marquee font-bold text-gray-900 text-sm tracking-wide">
                             Welcome to Fever Dose Calculator! Stay healthy and safe. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Welcome to Fever Dose Calculator! Stay healthy and safe.
@@ -79,7 +67,7 @@
                 </div>
             </div>
 
-            <!-- SCROLLING MARQUEE BANNER (Firebase Synced) -->
+            <!-- FIREBASE BANNER -->
             <div class="marquee-container mt-4 mb-2">
                 <div id="newJoinBanner" class="animate-marquee font-extrabold text-gray-800 text-[15px] tracking-wide">
                     Connecting to Firebase...
@@ -94,35 +82,27 @@
 
             <!-- QUICK LINKS -->
             <div class="flex justify-between px-6 mt-6">
-                <div class="flex flex-col items-center gap-2 cursor-pointer transition-transform active:scale-95">
-                    <div class="w-[60px] h-[60px] rounded-full bg-[#E91E63] flex items-center justify-center shadow-md text-white text-2xl">
-                        <i class="fas fa-grip"></i>
-                    </div>
+                <div onclick="showToast('Opening New App module...')" class="flex flex-col items-center gap-2 cursor-pointer transition-transform hover:scale-105 active:scale-95">
+                    <div class="w-[60px] h-[60px] rounded-full bg-[#E91E63] flex items-center justify-center shadow-md text-white text-2xl"><i class="fas fa-grip"></i></div>
                     <span class="text-[11px] font-bold text-gray-900">New App</span>
                 </div>
-                <div class="flex flex-col items-center gap-2 cursor-pointer transition-transform active:scale-95">
-                    <div class="w-[60px] h-[60px] rounded-full bg-[#4CAF50] flex items-center justify-center shadow-md text-white text-2xl">
-                        <i class="fas fa-file-lines"></i>
-                    </div>
+                <div onclick="showToast('Loading Medical Articles...')" class="flex flex-col items-center gap-2 cursor-pointer transition-transform hover:scale-105 active:scale-95">
+                    <div class="w-[60px] h-[60px] rounded-full bg-[#4CAF50] flex items-center justify-center shadow-md text-white text-2xl"><i class="fas fa-file-lines"></i></div>
                     <span class="text-[11px] font-bold text-gray-900">Articles</span>
                 </div>
-                <div class="flex flex-col items-center gap-2 cursor-pointer transition-transform active:scale-95">
-                    <div class="w-[60px] h-[60px] rounded-full bg-[#FF9800] flex items-center justify-center shadow-md text-white text-2xl pl-1">
-                        <i class="fas fa-play"></i>
-                    </div>
+                <div onclick="showToast('Loading Video Guides...')" class="flex flex-col items-center gap-2 cursor-pointer transition-transform hover:scale-105 active:scale-95">
+                    <div class="w-[60px] h-[60px] rounded-full bg-[#FF9800] flex items-center justify-center shadow-md text-white text-2xl pl-1"><i class="fas fa-play"></i></div>
                     <span class="text-[11px] font-bold text-gray-900">Videos</span>
                 </div>
-                <div class="flex flex-col items-center gap-2 cursor-pointer transition-transform active:scale-95">
-                    <div class="w-[60px] h-[60px] rounded-full bg-[#1976D2] flex items-center justify-center shadow-md text-white text-2xl">
-                        <i class="fas fa-calendar-check"></i>
-                    </div>
+                <div onclick="showToast('Opening Appointment Scheduler...')" class="flex flex-col items-center gap-2 cursor-pointer transition-transform hover:scale-105 active:scale-95">
+                    <div class="w-[60px] h-[60px] rounded-full bg-[#1976D2] flex items-center justify-center shadow-md text-white text-2xl"><i class="fas fa-calendar-check"></i></div>
                     <span class="text-[11px] font-bold text-gray-900">Dr.Appointme</span>
                 </div>
             </div>
 
             <!-- SCHEDULE CARD -->
-            <div class="px-5 mt-8">
-                <div class="bg-white rounded-[24px] p-4 flex items-center shadow-[0_4px_20px_rgba(0,0,0,0.03)] cursor-pointer">
+            <div onclick="showToast('Checking alerts...')" class="px-5 mt-8 transition-transform hover:scale-105">
+                <div class="bg-white rounded-[24px] p-4 flex items-center shadow-md cursor-pointer border border-gray-50">
                     <div class="bg-[#F0F7FF] text-[#1976D2] rounded-2xl w-14 h-14 flex flex-col items-center justify-center">
                         <span class="text-[9px] font-black uppercase tracking-widest mt-1" id="currentMonth">SEPT</span>
                         <span class="text-[22px] font-black leading-none mb-1" id="currentDay">2</span>
@@ -134,130 +114,146 @@
                 </div>
             </div>
 
-            <!-- NEW DOSE CALCULATION (WORKING BUTTON HERE) -->
+            <!-- NEW DOSE CALCULATION BANNER -->
             <div class="px-5 mt-6 relative mb-8">
                 <div class="bg-[#1976D2] rounded-[28px] p-7 relative overflow-hidden shadow-xl cursor-pointer">
                     <div class="absolute -right-8 -top-8 w-40 h-40 bg-white/10 rounded-full"></div>
                     <div class="absolute right-[-10%] bottom-[-30%] w-64 h-64 bg-white/10 rounded-full"></div>
                     
                     <h3 class="text-[22px] font-bold text-white relative z-10 mb-2">New Dose Calculation</h3>
-                    <p class="text-blue-100 text-[13px] font-medium relative z-10 mb-8 max-w-[85%] leading-relaxed">
-                        Precisely calculate medicine based on weight and standard medical formulas.
-                    </p>
+                    <p class="text-blue-100 text-[13px] font-medium relative z-10 mb-8 max-w-[85%] leading-relaxed">Precisely calculate medicine based on weight and standard medical formulas.</p>
                     
-                    <!-- THIS BUTTON NOW SWITCHES SCREENS -->
-                    <button onclick="switchScreen('calculatorScreen')" class="bg-white text-[#1976D2] font-extrabold rounded-full px-7 py-3 text-sm relative z-10 shadow-sm transition-transform active:scale-95">
+                    <button onclick="switchScreen('calculatorScreen')" class="bg-white text-[#1976D2] font-extrabold rounded-full px-7 py-3 text-sm relative z-10 shadow-lg transition-transform hover:scale-105 active:scale-95 hover:bg-blue-50">
                         Start Now
                     </button>
                 </div>
-                
-                <div class="absolute -bottom-3 right-8 bg-[#1976D2] text-white w-14 h-14 rounded-[16px] flex items-center justify-center shadow-lg border-[4px] border-[#F4F6F9] cursor-pointer hover:bg-blue-700 transition-colors">
+                <div onclick="showToast('Opening AI Support Chat...')" class="absolute -bottom-3 right-8 bg-[#1976D2] text-white w-14 h-14 rounded-[16px] flex items-center justify-center shadow-lg border-[4px] border-[#F4F6F9] cursor-pointer hover:bg-blue-700 transition-transform hover:scale-110">
                     <i class="fas fa-comment-alt text-xl"></i>
-                </div>
-            </div>
-
-            <!-- BOTTOM NAVIGATION BAR -->
-            <div class="absolute bottom-0 w-full bg-white border-t border-gray-100 px-6 py-4 flex justify-between items-center sm:rounded-b-[32px] shadow-[0_-10px_40px_rgba(0,0,0,0.05)] z-50">
-                <div onclick="switchScreen('dashboardScreen')" class="flex flex-col items-center text-[#1976D2] bg-[#F0F7FF] px-5 py-2 rounded-full cursor-pointer">
-                    <i class="fas fa-house mb-1 text-lg"></i>
-                    <span class="text-[10px] font-bold">Home</span>
-                </div>
-                <div onclick="switchScreen('calculatorScreen')" class="flex flex-col items-center text-gray-400 hover:text-[#1976D2] cursor-pointer transition-colors">
-                    <i class="fas fa-calculator mb-1 text-xl"></i>
-                    <span class="text-[10px] font-bold">Calculate</span>
-                </div>
-                <div class="flex flex-col items-center text-gray-400 hover:text-gray-600 cursor-pointer transition-colors">
-                    <i class="fas fa-clock-rotate-left mb-1 text-xl"></i>
-                    <span class="text-[10px] font-bold">History</span>
-                </div>
-                <div class="flex flex-col items-center text-gray-400 hover:text-gray-600 cursor-pointer transition-colors">
-                    <i class="fas fa-face-smile mb-1 text-xl"></i>
-                    <span class="text-[10px] font-bold">Children</span>
-                </div>
-                <div class="flex flex-col items-center text-gray-400 hover:text-gray-600 cursor-pointer transition-colors">
-                    <i class="fas fa-gear mb-1 text-xl"></i>
-                    <span class="text-[10px] font-bold">Settings</span>
                 </div>
             </div>
         </div>
 
         <!-- ========================================== -->
-        <!-- SCREEN 2: CALCULATOR (Hidden by default)   -->
+        <!-- SCREEN 2: CALCULATOR                       -->
         <!-- ========================================== -->
-        <div id="calculatorScreen" class="hidden pb-24 h-full bg-white sm:rounded-[32px]">
-            <!-- Header with Back Button -->
-            <div class="flex items-center px-5 pt-8 pb-4 border-b border-gray-100">
-                <i onclick="switchScreen('dashboardScreen')" class="fas fa-arrow-left text-gray-600 text-xl cursor-pointer p-2 hover:bg-gray-100 rounded-full transition"></i>
-                <h1 class="font-extrabold text-gray-900 text-xl ml-4">Calculator</h1>
+        <div id="calculatorScreen" class="screen-view hidden pb-24 h-full bg-white sm:rounded-[32px]">
+            <div class="flex items-center justify-between px-5 pt-8 pb-4 border-b border-gray-100">
+                <div class="flex items-center">
+                    <i onclick="switchScreen('dashboardScreen')" class="fas fa-arrow-left text-gray-600 text-xl cursor-pointer p-2 hover:bg-gray-100 rounded-full transition"></i>
+                    <h1 class="font-extrabold text-gray-900 text-xl ml-4">Calculator</h1>
+                </div>
+                <i onclick="showToast('Clearing form...')" class="fas fa-rotate-right text-blue-500 p-2 cursor-pointer hover:bg-blue-50 rounded-full transition"></i>
             </div>
-
             <div class="p-6">
-                <p class="text-xs text-gray-500 mb-6 font-semibold tracking-wide uppercase">Accurate pediatric dosing based strictly on current child weight.</p>
-
-                <!-- Calculator Form -->
                 <form id="calcForm" class="space-y-5">
-                    <!-- Child Name -->
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Child Name</label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i class="fas fa-user text-blue-500"></i>
-                            </div>
-                            <input type="text" id="childName" required class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition outline-none" placeholder="Enter child's name">
-                        </div>
+                        <div class="relative"><i class="fas fa-user absolute left-4 top-4 text-blue-500"></i><input type="text" id="childName" required class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Enter name"></div>
                     </div>
-
-                    <!-- Weight -->
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Child Weight (kg)</label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i class="fas fa-weight-scale text-blue-500"></i>
-                            </div>
-                            <input type="number" id="childWeight" step="0.1" required class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition outline-none" placeholder="e.g., 12.5">
-                        </div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Weight (kg)</label>
+                        <div class="relative"><i class="fas fa-weight-scale absolute left-4 top-4 text-blue-500"></i><input type="number" id="childWeight" step="0.1" required class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g., 12.5"></div>
                     </div>
-
-                    <!-- Medicine Dropdown -->
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Medication Type</label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i class="fas fa-prescription-bottle-medical text-blue-500"></i>
-                            </div>
-                            <select id="medicine" class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-gray-700 font-semibold outline-none appearance-none">
+                        <div class="relative"><i class="fas fa-prescription-bottle-medical absolute left-4 top-4 text-blue-500"></i>
+                            <select id="medicine" class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-semibold text-gray-700">
                                 <option value="para_120_5">Paracetamol Syrup (120mg/5mL)</option>
                                 <option value="para_250_5">Paracetamol Syrup (250mg/5mL)</option>
-                                <option value="para_500_5">Paracetamol Syrup (500mg/5mL)</option>
-                                <option value="para_drops_100_1">Paracetamol Drops (100mg/1mL)</option>
                                 <option value="ibu_100_5">Ibuprofen Syrup (100mg/5mL)</option>
-                                <option value="ibu_200_5">Ibuprofen Syrup (200mg/5mL)</option>
                             </select>
                         </div>
                     </div>
-
-                    <!-- Submit Button -->
-                    <button type="submit" class="w-full bg-[#1976D2] hover:bg-blue-700 text-white font-extrabold text-lg py-4 rounded-xl shadow-lg transition-transform transform active:scale-95">
-                        Calculate Dosage
-                    </button>
+                    <button type="submit" class="w-full bg-[#1976D2] hover:bg-blue-700 text-white font-extrabold text-lg py-4 rounded-xl shadow-lg transition-transform active:scale-95">Calculate Dosage</button>
                 </form>
 
-                <!-- Results Card (Hidden by default) -->
-                <div id="resultCard" class="hidden mt-8 bg-blue-50 rounded-2xl border-2 border-blue-200 p-6 text-center">
-                    <h2 class="text-xs font-black text-gray-500 tracking-widest uppercase mb-4">Recommended Dosage for <span id="resName" class="text-[#1976D2]"></span></h2>
-                    
+                <div id="resultCard" class="hidden mt-8 bg-blue-50 rounded-2xl border-2 border-blue-200 p-6 text-center shadow-sm">
+                    <h2 class="text-xs font-black text-gray-500 tracking-widest uppercase mb-4">Dosage for <span id="resName" class="text-[#1976D2]"></span></h2>
                     <div class="flex items-end justify-center gap-1 mb-2">
-                        <span id="resMl" class="text-5xl font-black text-[#1976D2] tracking-tighter"></span>
-                        <span id="resUnit" class="text-2xl font-bold text-[#1976D2] mb-1">mL</span>
+                        <span id="resMl" class="text-5xl font-black text-[#1976D2] tracking-tighter"></span><span id="resUnit" class="text-2xl font-bold text-[#1976D2] mb-1">mL</span>
                     </div>
-                    
                     <p class="text-sm font-bold text-gray-600 mb-4">Equates to <span id="resMg"></span> mg</p>
-                    
-                    <div class="bg-white/70 rounded-xl p-3 text-sm font-semibold text-gray-800 flex items-center gap-3 text-left">
-                        <i class="fas fa-lightbulb text-yellow-500 text-lg"></i>
-                        <span id="resInstructions"></span>
-                    </div>
+                    <div class="bg-white/70 rounded-xl p-3 text-sm font-semibold text-gray-800 flex items-center gap-3 text-left"><i class="fas fa-lightbulb text-yellow-500 text-lg"></i><span id="resInstructions"></span></div>
                 </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SCREEN 3: HISTORY                          -->
+        <!-- ========================================== -->
+        <div id="historyScreen" class="screen-view hidden pb-24 h-full">
+            <div class="px-5 pt-8 pb-4 mb-4 border-b border-gray-200 bg-white"><h1 class="font-extrabold text-gray-900 text-2xl">Dose History</h1></div>
+            <div class="px-5 space-y-3">
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 cursor-pointer hover:shadow-md transition">
+                    <div class="flex justify-between items-center mb-1"><span class="font-bold text-gray-900 text-lg">Aarav Sharma</span><span class="text-[10px] font-bold text-gray-400 bg-gray-100 px-2 py-1 rounded-md">Today, 2:30 PM</span></div>
+                    <p class="text-sm text-gray-500 font-medium">Paracetamol (120mg/5mL)</p>
+                    <div class="flex justify-between items-center mt-3"><p class="text-[#1976D2] font-black text-lg">7.5 mL</p><i class="fas fa-chevron-right text-gray-300"></i></div>
+                </div>
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 cursor-pointer hover:shadow-md transition">
+                    <div class="flex justify-between items-center mb-1"><span class="font-bold text-gray-900 text-lg">Aditi Patel</span><span class="text-[10px] font-bold text-gray-400 bg-gray-100 px-2 py-1 rounded-md">Yesterday</span></div>
+                    <p class="text-sm text-gray-500 font-medium">Ibuprofen (100mg/5mL)</p>
+                    <div class="flex justify-between items-center mt-3"><p class="text-[#1976D2] font-black text-lg">4.0 mL</p><i class="fas fa-chevron-right text-gray-300"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SCREEN 4: CHILDREN                         -->
+        <!-- ========================================== -->
+        <div id="childrenScreen" class="screen-view hidden pb-24 h-full">
+            <div class="px-5 pt-8 pb-4 mb-4 border-b border-gray-200 bg-white flex justify-between items-center">
+                <h1 class="font-extrabold text-gray-900 text-2xl">My Children</h1>
+                <i onclick="showToast('Add Child Dialog')" class="fas fa-plus text-[#1976D2] bg-blue-50 p-2 rounded-full cursor-pointer hover:bg-blue-100"></i>
+            </div>
+            <div class="px-5 grid grid-cols-2 gap-4">
+                <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center text-center cursor-pointer hover:shadow-md transition">
+                    <div class="w-16 h-16 bg-blue-100 text-blue-500 rounded-full flex items-center justify-center text-3xl font-black mb-3"><i class="fas fa-child"></i></div>
+                    <span class="font-bold text-gray-900">Amit</span><span class="text-xs text-gray-400 font-bold mt-1">12.5 kg</span>
+                </div>
+                <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 flex flex-col items-center text-center cursor-pointer hover:shadow-md transition">
+                    <div class="w-16 h-16 bg-pink-100 text-pink-500 rounded-full flex items-center justify-center text-3xl font-black mb-3"><i class="fas fa-child-dress"></i></div>
+                    <span class="font-bold text-gray-900">Riya</span><span class="text-xs text-gray-400 font-bold mt-1">10.0 kg</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- SCREEN 5: SETTINGS                         -->
+        <!-- ========================================== -->
+        <div id="settingsScreen" class="screen-view hidden pb-24 h-full">
+            <div class="px-5 pt-8 pb-4 mb-4 border-b border-gray-200 bg-white"><h1 class="font-extrabold text-gray-900 text-2xl">Settings</h1></div>
+            <div class="px-5 space-y-3">
+                <div onclick="showToast('Profile clicked')" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex justify-between items-center cursor-pointer hover:bg-gray-50">
+                    <div class="flex items-center gap-4"><i class="fas fa-user-circle text-2xl text-gray-400"></i><span class="font-bold text-gray-700">My Profile</span></div><i class="fas fa-chevron-right text-gray-300"></i>
+                </div>
+                <div onclick="showToast('Units updated to LBS')" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex justify-between items-center cursor-pointer hover:bg-gray-50">
+                    <div class="flex items-center gap-4"><i class="fas fa-scale-balanced text-2xl text-gray-400"></i><span class="font-bold text-gray-700">Weight Units</span></div><span class="text-xs font-bold text-blue-500 bg-blue-50 px-2 py-1 rounded">KG</span>
+                </div>
+                <div onclick="showToast('Notifications toggled')" class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex justify-between items-center cursor-pointer hover:bg-gray-50">
+                    <div class="flex items-center gap-4"><i class="fas fa-bell text-2xl text-gray-400"></i><span class="font-bold text-gray-700">Notifications</span></div><i class="fas fa-toggle-on text-2xl text-[#4CAF50]"></i>
+                </div>
+                <div class="mt-8 text-center"><button onclick="showToast('Checking for updates...')" class="text-xs font-bold text-gray-400 hover:text-gray-600 transition">App Version 1.0.0 (Web Build)</button></div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- GLOBAL BOTTOM NAVIGATION BAR               -->
+        <!-- ========================================== -->
+        <div class="absolute bottom-0 w-full bg-white border-t border-gray-100 px-6 py-4 flex justify-between items-center sm:rounded-b-[32px] shadow-[0_-10px_40px_rgba(0,0,0,0.05)] z-40">
+            <div id="nav-dashboardScreen" onclick="switchScreen('dashboardScreen')" class="nav-item flex flex-col items-center text-[#1976D2] bg-[#F0F7FF] px-5 py-2 rounded-full cursor-pointer transition-all">
+                <i class="fas fa-house mb-1 text-xl"></i><span class="text-[10px] font-bold">Home</span>
+            </div>
+            <div id="nav-calculatorScreen" onclick="switchScreen('calculatorScreen')" class="nav-item flex flex-col items-center text-gray-400 hover:text-gray-600 cursor-pointer transition-all">
+                <i class="fas fa-calculator mb-1 text-xl"></i><span class="text-[10px] font-bold">Calculate</span>
+            </div>
+            <div id="nav-historyScreen" onclick="switchScreen('historyScreen')" class="nav-item flex flex-col items-center text-gray-400 hover:text-gray-600 cursor-pointer transition-all">
+                <i class="fas fa-clock-rotate-left mb-1 text-xl"></i><span class="text-[10px] font-bold">History</span>
+            </div>
+            <div id="nav-childrenScreen" onclick="switchScreen('childrenScreen')" class="nav-item flex flex-col items-center text-gray-400 hover:text-gray-600 cursor-pointer transition-all">
+                <i class="fas fa-face-smile mb-1 text-xl"></i><span class="text-[10px] font-bold">Children</span>
+            </div>
+            <div id="nav-settingsScreen" onclick="switchScreen('settingsScreen')" class="nav-item flex flex-col items-center text-gray-400 hover:text-gray-600 cursor-pointer transition-all">
+                <i class="fas fa-gear mb-1 text-xl"></i><span class="text-[10px] font-bold">Settings</span>
             </div>
         </div>
 
@@ -265,16 +261,53 @@
 
     <!-- UI & CALCULATOR LOGIC -->
     <script>
-        // Switch between Dashboard and Calculator screens
-        function switchScreen(screenId) {
-            document.getElementById('dashboardScreen').classList.add('hidden');
-            document.getElementById('calculatorScreen').classList.add('hidden');
+        // --- TOAST NOTIFICATION LOGIC ---
+        let toastTimeout;
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = message;
+            toast.classList.remove('hidden');
+            toast.classList.remove('toast-anim');
+            void toast.offsetWidth; // Trigger reflow to restart animation
+            toast.classList.add('toast-anim');
             
-            document.getElementById(screenId).classList.remove('hidden');
-            document.getElementById(screenId).classList.add('block');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => { toast.classList.add('hidden'); }, 2400);
         }
 
-        // Setup Date & Time
+        // --- NAVIGATION LOGIC ---
+        function switchScreen(targetScreenId) {
+            // Hide all screens
+            const screens = ['dashboardScreen', 'calculatorScreen', 'historyScreen', 'childrenScreen', 'settingsScreen'];
+            screens.forEach(s => {
+                document.getElementById(s).classList.add('hidden');
+                document.getElementById(s).classList.remove('block');
+            });
+            
+            // Show Target Screen
+            document.getElementById(targetScreenId).classList.remove('hidden');
+            document.getElementById(targetScreenId).classList.add('block');
+
+            // Reset Bottom Nav styling
+            screens.forEach(s => {
+                const navEl = document.getElementById('nav-' + s);
+                if (navEl) {
+                    navEl.className = 'nav-item flex flex-col items-center text-gray-400 hover:text-gray-600 cursor-pointer transition-all';
+                    // Remove padding and background from inactive items
+                    navEl.classList.remove('px-5', 'py-2', 'bg-[#F0F7FF]');
+                }
+            });
+
+            // Highlight Active Nav
+            const activeNav = document.getElementById('nav-' + targetScreenId);
+            if (activeNav) {
+                activeNav.className = 'nav-item flex flex-col items-center text-[#1976D2] bg-[#F0F7FF] px-5 py-2 rounded-full cursor-pointer transition-all';
+            }
+            
+            window.scrollTo(0, 0); // Scroll to top when switching
+        }
+
+        // --- DATE & GREETING SETUP ---
         const date = new Date();
         const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
         const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -289,50 +322,32 @@
         else if (hour < 17) greetingText = "Good Afternoon,";
         document.getElementById('timeGreeting').innerText = greetingText;
 
-        // Calculator Math Logic
+        // --- CALCULATOR MATH ---
         document.getElementById('calcForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
             const name = document.getElementById('childName').value;
             const weight = parseFloat(document.getElementById('childWeight').value);
             const medicine = document.getElementById('medicine').value;
             
-            let strengthMg, strengthMl, doseMgPerKg, instructions, unit;
+            let strengthMg, strengthMl, doseMgPerKg, instructions, unit = "mL";
             
             switch(medicine) {
-                case 'para_120_5': 
-                    strengthMg = 120; strengthMl = 5; doseMgPerKg = 15; unit = "mL"; 
-                    instructions = "Give every 4 to 6 hours. Maximum 4 times a day."; break;
-                case 'para_250_5': 
-                    strengthMg = 250; strengthMl = 5; doseMgPerKg = 15; unit = "mL"; 
-                    instructions = "Give every 4 to 6 hours. Maximum 4 times a day."; break;
-                case 'para_500_5': 
-                    strengthMg = 500; strengthMl = 5; doseMgPerKg = 15; unit = "mL"; 
-                    instructions = "Give every 4 to 6 hours. Maximum 4 times a day."; break;
-                case 'para_drops_100_1': 
-                    strengthMg = 100; strengthMl = 1; doseMgPerKg = 15; unit = "mL"; 
-                    instructions = "Give every 4 to 6 hours. Maximum 4 times a day."; break;
-                case 'ibu_100_5': 
-                    strengthMg = 100; strengthMl = 5; doseMgPerKg = 10; unit = "mL"; 
-                    instructions = "Give every 6 to 8 hours. Maximum 3 to 4 times a day."; break;
-                case 'ibu_200_5': 
-                    strengthMg = 200; strengthMl = 5; doseMgPerKg = 10; unit = "mL"; 
-                    instructions = "Give every 6 to 8 hours. Maximum 3 to 4 times a day."; break;
+                case 'para_120_5': strengthMg = 120; strengthMl = 5; doseMgPerKg = 15; instructions = "Give every 4 to 6 hours. Max 4 times a day."; break;
+                case 'para_250_5': strengthMg = 250; strengthMl = 5; doseMgPerKg = 15; instructions = "Give every 4 to 6 hours. Max 4 times a day."; break;
+                case 'ibu_100_5': strengthMg = 100; strengthMl = 5; doseMgPerKg = 10; instructions = "Give every 6 to 8 hours. Max 3 to 4 times a day."; break;
             }
             
             const totalMg = weight * doseMgPerKg;
             const totalMl = (totalMg / strengthMg) * strengthMl;
             
-            const roundedMg = Math.round(totalMg * 100) / 100;
-            const roundedMl = Math.round(totalMl * 100) / 100;
-            
             document.getElementById('resName').textContent = name;
-            document.getElementById('resMl').textContent = roundedMl;
+            document.getElementById('resMl').textContent = (Math.round(totalMl * 100) / 100).toFixed(2);
             document.getElementById('resUnit').textContent = unit;
-            document.getElementById('resMg').textContent = roundedMg;
+            document.getElementById('resMg').textContent = Math.round(totalMg * 100) / 100;
             document.getElementById('resInstructions').textContent = instructions;
             
             document.getElementById('resultCard').classList.remove('hidden');
+            showToast('Dosage Calculated Successfully!');
         });
     </script>
 
@@ -341,14 +356,13 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
-        // IMPORTANT: Replace "YOUR_WEB_APP_ID" with your actual Web App ID from Firebase Settings
         const firebaseConfig = {
             apiKey: "AIzaSyAVuW1T0u_DwROv7srGmTOOqFIMwboPMrQ",
             authDomain: "fever-dose-calculator.firebaseapp.com",
             projectId: "fever-dose-calculator",
             storageBucket: "fever-dose-calculator.firebasestorage.app",
             messagingSenderId: "1092790983793",
-            appId: "YOUR_WEB_APP_ID" 
+            appId: "YOUR_WEB_APP_ID" // Update this for Web!
         };
 
         const app = initializeApp(firebaseConfig);
@@ -356,42 +370,27 @@
         const bannerElement = document.getElementById("newJoinBanner");
 
         onSnapshot(collection(db, "NewJoin"), (snapshot) => {
-            if (snapshot.empty) {
-                bannerElement.innerText = "Connected to Firebase, but NewJoin folder is empty!";
-                return;
-            }
-            
+            if (snapshot.empty) { bannerElement.innerText = "Connected to Firebase, but NewJoin folder is empty!"; return; }
             let allNames = [];
             snapshot.forEach((doc) => {
                 const data = doc.data();
                 let nameText = data.name;
-                
                 if (!nameText) {
                     for (const key in data) {
-                        if (typeof data[key] === 'string' && data[key].trim() !== '') {
-                            nameText = data[key];
-                            break;
-                        }
+                        if (typeof data[key] === 'string' && data[key].trim() !== '') { nameText = data[key]; break; }
                     }
                 }
-                
                 if (nameText) {
                     let cleaned = nameText.replace(/"/g, "").replace(/\[/g, "").replace(/\]/g, "").trim();
-                    if (cleaned.length > 0) {
-                        allNames.push(cleaned);
-                    }
+                    if (cleaned.length > 0) { allNames.push(cleaned); }
                 }
             });
-            
             if (allNames.length > 0) {
                 let joinedText = allNames.join(" • ");
                 bannerElement.innerText = `${joinedText}        •        ${joinedText}        •        ${joinedText}`;
             } else {
                 bannerElement.innerText = "NewJoin found, but 'name' field is missing or empty";
             }
-        }, (error) => {
-            console.error("Error fetching NewJoin: ", error);
-            bannerElement.innerText = "Firebase Error: " + error.message;
         });
     </script>
 </body>
