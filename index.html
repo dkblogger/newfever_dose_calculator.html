@@ -3,151 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fever Dose Calculator</title>
-    <!-- Tailwind CSS for styling -->
+    <title>FeverDose Dashboard</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome for icons -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- Google Fonts -->
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f3f4f6; }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #E5E7EB; /* Darker gray for desktop background */
+        }
+        
+        /* Mobile App Container styles */
+        .app-container {
+            background-color: #F4F6F9; /* Off-white app background */
+            min-height: 100vh;
+        }
+
+        /* Marquee Animation */
+        .marquee-container {
+            overflow: hidden;
+            white-space: nowrap;
+            width: 100%;
+        }
+        .animate-marquee {
+            display: inline-block;
+            animation: marquee 15s linear infinite;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* Hide scrollbar for a cleaner app look */
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4">
-    <div class="bg-white rounded-3xl shadow-xl w-full max-w-md p-6 border-t-8 border-blue-500">
+<body class="flex items-center justify-center">
+
+    <!-- Mobile Frame (Restricts width on desktop, full width on mobile) -->
+    <div class="app-container w-full max-w-md relative overflow-x-hidden shadow-2xl sm:min-h-[850px] sm:my-8 sm:rounded-[40px] sm:border-[8px] sm:border-gray-900 pb-24">
         
-        <!-- Header -->
-        <div class="flex items-center justify-between mb-6">
-            <h1 class="text-2xl font-extrabold text-gray-800">Fever Dose <span class="text-blue-500">Calculator</span></h1>
-            <i class="fas fa-stethoscope text-3xl text-blue-100"></i>
-        </div>
-        <p class="text-xs text-gray-500 mb-6 font-semibold tracking-wide uppercase">Accurate pediatric dosing based strictly on current child weight.</p>
-
-        <!-- Calculator Form -->
-        <form id="calcForm" class="space-y-5">
-            <!-- Child Name -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Child Name</label>
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="fas fa-user text-blue-500"></i>
-                    </div>
-                    <input type="text" id="childName" required class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition outline-none" placeholder="Enter child's name">
+        <!-- TOP HEADER -->
+        <div class="flex justify-between items-center px-5 pt-8 pb-2">
+            <div class="flex items-center gap-4">
+                <i class="fas fa-bars text-blue-600 text-xl cursor-pointer"></i>
+                <div>
+                    <h1 class="font-extrabold text-gray-900 text-xl tracking-tight">FeverDose</h1>
+                    <p class="text-[10px] text-gray-500 font-semibold">Hi, Guest User • Kids: amit</p>
                 </div>
             </div>
-
-            <!-- Weight -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Child Weight (kg)</label>
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="fas fa-weight-scale text-blue-500"></i>
-                    </div>
-                    <input type="number" id="childWeight" step="0.1" required class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition outline-none" placeholder="e.g., 12.5">
-                </div>
-            </div>
-
-            <!-- Medicine Dropdown -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Medication Type</label>
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="fas fa-prescription-bottle-medical text-blue-500"></i>
-                    </div>
-                    <select id="medicine" class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-gray-700 font-semibold outline-none appearance-none">
-                        <option value="para_120_5">Paracetamol Syrup (120mg/5mL)</option>
-                        <option value="para_250_5">Paracetamol Syrup (250mg/5mL)</option>
-                        <option value="para_500_5">Paracetamol Syrup (500mg/5mL)</option>
-                        <option value="para_drops_100_1">Paracetamol Drops (100mg/1mL)</option>
-                        <option value="ibu_100_5">Ibuprofen Syrup (100mg/5mL)</option>
-                        <option value="ibu_200_5">Ibuprofen Syrup (200mg/5mL)</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Submit Button -->
-            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-lg py-4 rounded-xl shadow-lg transition-transform transform active:scale-95">
-                Calculate Dosage
-            </button>
-        </form>
-
-        <!-- Results Card (Hidden by default) -->
-        <div id="resultCard" class="hidden mt-8 bg-blue-50 rounded-2xl border-2 border-blue-200 p-6 text-center animate-fade-in-up">
-            <h2 class="text-xs font-black text-gray-500 tracking-widest uppercase mb-4">Recommended Dosage for <span id="resName" class="text-blue-600"></span></h2>
             
-            <div class="flex items-end justify-center gap-1 mb-2">
-                <span id="resMl" class="text-5xl font-black text-blue-600 tracking-tighter"></span>
-                <span id="resUnit" class="text-2xl font-bold text-blue-600 mb-1">mL</span>
-            </div>
-            
-            <p class="text-sm font-bold text-gray-600 mb-4">Equates to <span id="resMg"></span> mg</p>
-            
-            <div class="bg-white/70 rounded-xl p-3 text-sm font-semibold text-gray-800 flex items-center gap-3 text-left">
-                <i class="fas fa-lightbulb text-yellow-500 text-lg"></i>
-                <span id="resInstructions"></span>
+            <!-- Top Right Action Icons -->
+            <div class="flex gap-4 text-blue-700 bg-white shadow-sm px-4 py-2 rounded-2xl items-center">
+                <i class="fas fa-share-nodes cursor-pointer"></i>
+                <i class="fas fa-moon cursor-pointer"></i>
+                <i class="fas fa-cloud cursor-pointer text-gray-400"></i>
+                <i class="fas fa-arrow-right-from-bracket text-red-500 cursor-pointer"></i>
             </div>
         </div>
-        
-        <!-- Disclaimer -->
-        <p class="text-[10px] text-gray-400 text-center mt-6 leading-tight">
-            Disclaimer: Dosing is calculated strictly on weight-based formulas. Verify actual medicine concentration (mg/mL) from your container package. Always consult a physician for expert advice.
-        </p>
+
+        <!-- PURPLE WELCOME BANNER -->
+        <div class="px-5 mt-4">
+            <div class="bg-[#EADDFF] rounded-xl py-3 px-4 flex justify-between items-center opacity-90">
+                <span class="font-bold text-gray-900 text-sm">Stay healthy and safe.</span>
+                <span class="font-bold text-gray-900 text-sm">Welcome</span>
+            </div>
+        </div>
+
+        <!-- SCROLLING MARQUEE BANNER -->
+        <div class="marquee-container mt-4 mb-2">
+            <div class="animate-marquee font-bold text-gray-900 text-[15px] tracking-wide">
+                Connected to Firebase, but NewJoin folder is empty...
+            </div>
+        </div>
+
+        <!-- GREETING -->
+        <div class="px-5 mt-6">
+            <p class="text-gray-500 text-sm font-semibold tracking-wide">Good Morning,</p>
+            <h2 class="text-[32px] font-black text-[#111827] -mt-1 tracking-tight">Guest User</h2>
+        </div>
+
+        <!-- QUICK LINKS (CIRCULAR BUTTONS) -->
+        <div class="flex justify-between px-6 mt-6">
+            <!-- App Button -->
+            <div class="flex flex-col items-center gap-2 cursor-pointer transition-transform active:scale-95">
+                <div class="w-[60px] h-[60px] rounded-full bg-[#E91E63] flex items-center justify-center shadow-md text-white text-2xl">
+                    <i class="fas fa-grip"></i>
+                </div>
+                <span class="text-[11px] font-bold text-gray-900">https://</span>
+            </div>
+            <!-- Articles Button -->
+            <div class="flex flex-col items-center gap-2 cursor-pointer transition-transform active:scale-95">
+                <div class="w-[60px] h-[60px] rounded-full bg-[#4CAF50] flex items-center justify-center shadow-md text-white text-2xl">
+                    <i class="fas fa-file-lines"></i>
+                </div>
+                <span class="text-[11px] font-bold text-gray-900">Articles</span>
+            </div>
+            <!-- Videos Button -->
+            <div class="flex flex-col items-center gap-2 cursor-pointer transition-transform active:scale-95">
+                <div class="w-[60px] h-[60px] rounded-full bg-[#FF9800] flex items-center justify-center shadow-md text-white text-2xl pl-1">
+                    <i class="fas fa-play"></i>
+                </div>
+                <span class="text-[11px] font-bold text-gray-900">Videos</span>
+            </div>
+            <!-- Appointment Button -->
+            <div class="flex flex-col items-center gap-2 cursor-pointer transition-transform active:scale-95">
+                <div class="w-[60px] h-[60px] rounded-full bg-[#1976D2] flex items-center justify-center shadow-md text-white text-2xl">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <span class="text-[11px] font-bold text-gray-900">Appointment</span>
+            </div>
+        </div>
+
+        <!-- SCHEDULE CARD -->
+        <div class="px-5 mt-8">
+            <div class="bg-white rounded-[24px] p-4 flex items-center shadow-[0_4px_20px_rgba(0,0,0,0.03)] cursor-pointer">
+                <!-- Date Box -->
+                <div class="bg-[#F0F7FF] text-[#1976D2] rounded-2xl w-14 h-14 flex flex-col items-center justify-center">
+                    <span class="text-[9px] font-black uppercase tracking-widest mt-1">Sept</span>
+                    <span class="text-[22px] font-black leading-none mb-1">2</span>
+                </div>
+                <!-- Details -->
+                <div class="ml-5">
+                    <h3 class="font-bold text-gray-900 text-[15px]">Wednesday Schedule</h3>
+                    <p class="text-xs text-gray-500 font-semibold mt-0.5">Manage 1 alerts</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW DOSE CALCULATION HERO CARD -->
+        <div class="px-5 mt-6 relative mb-8">
+            <div class="bg-[#1976D2] rounded-[28px] p-7 relative overflow-hidden shadow-xl cursor-pointer">
+                
+                <!-- Decorative translucent circles -->
+                <div class="absolute -right-8 -top-8 w-40 h-40 bg-white/10 rounded-full"></div>
+                <div class="absolute right-[-10%] bottom-[-30%] w-64 h-64 bg-white/10 rounded-full"></div>
+                
+                <!-- Content -->
+                <h3 class="text-[22px] font-bold text-white relative z-10 mb-2">New Dose Calculation</h3>
+                <p class="text-blue-100 text-[13px] font-medium relative z-10 mb-8 max-w-[85%] leading-relaxed">
+                    Precisely calculate medicine based on weight and standard medical formulas.
+                </p>
+                
+                <!-- Action Button -->
+                <button class="bg-white text-[#1976D2] font-extrabold rounded-full px-7 py-3 text-sm relative z-10 shadow-sm transition-transform active:scale-95">
+                    Start Now
+                </button>
+            </div>
+            
+            <!-- Chat FAB (Floating Action Button) over the card -->
+            <div class="absolute -bottom-3 right-8 bg-[#1976D2] text-white w-12 h-12 rounded-[14px] flex items-center justify-center shadow-lg border-[3px] border-[#F4F6F9] cursor-pointer hover:bg-blue-700 transition-colors">
+                <i class="fas fa-message text-lg"></i>
+            </div>
+        </div>
+
+        <!-- BOTTOM NAVIGATION BAR -->
+        <div class="absolute bottom-0 w-full bg-white border-t border-gray-100 px-6 py-4 flex justify-between items-center sm:rounded-b-[32px] shadow-[0_-10px_40px_rgba(0,0,0,0.05)] z-50">
+            <!-- Active Tab (Home) -->
+            <div class="flex flex-col items-center text-[#1976D2] bg-[#F0F7FF] px-5 py-2 rounded-full cursor-pointer">
+                <i class="fas fa-house mb-1 text-lg"></i>
+                <span class="text-[10px] font-bold">Home</span>
+            </div>
+            
+            <!-- Inactive Tabs -->
+            <div class="flex flex-col items-center text-gray-400 hover:text-gray-600 cursor-pointer transition-colors">
+                <i class="fas fa-calculator mb-1 text-xl"></i>
+                <span class="text-[10px] font-bold">Calculate</span>
+            </div>
+            <div class="flex flex-col items-center text-gray-400 hover:text-gray-600 cursor-pointer transition-colors">
+                <i class="fas fa-clock-rotate-left mb-1 text-xl"></i>
+                <span class="text-[10px] font-bold">History</span>
+            </div>
+            <div class="flex flex-col items-center text-gray-400 hover:text-gray-600 cursor-pointer transition-colors">
+                <i class="fas fa-face-smile mb-1 text-xl"></i>
+                <span class="text-[10px] font-bold">Children</span>
+            </div>
+            <div class="flex flex-col items-center text-gray-400 hover:text-gray-600 cursor-pointer transition-colors">
+                <i class="fas fa-gear mb-1 text-xl"></i>
+                <span class="text-[10px] font-bold">Settings</span>
+            </div>
+        </div>
+
     </div>
 
-    <!-- Application Logic -->
-    <script>
-        document.getElementById('calcForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Get inputs
-            const name = document.getElementById('childName').value;
-            const weight = parseFloat(document.getElementById('childWeight').value);
-            const medicine = document.getElementById('medicine').value;
-            
-            // Variables for formula
-            let strengthMg, strengthMl, doseMgPerKg, instructions, unit;
-            
-            // Apply medical logic based on selection
-            switch(medicine) {
-                case 'para_120_5': 
-                    strengthMg = 120; strengthMl = 5; doseMgPerKg = 15; unit = "mL"; 
-                    instructions = "Give every 4 to 6 hours. Maximum 4 times a day."; break;
-                case 'para_250_5': 
-                    strengthMg = 250; strengthMl = 5; doseMgPerKg = 15; unit = "mL"; 
-                    instructions = "Give every 4 to 6 hours. Maximum 4 times a day."; break;
-                case 'para_500_5': 
-                    strengthMg = 500; strengthMl = 5; doseMgPerKg = 15; unit = "mL"; 
-                    instructions = "Give every 4 to 6 hours. Maximum 4 times a day."; break;
-                case 'para_drops_100_1': 
-                    strengthMg = 100; strengthMl = 1; doseMgPerKg = 15; unit = "mL"; 
-                    instructions = "Give every 4 to 6 hours. Maximum 4 times a day."; break;
-                case 'ibu_100_5': 
-                    strengthMg = 100; strengthMl = 5; doseMgPerKg = 10; unit = "mL"; 
-                    instructions = "Give every 6 to 8 hours. Maximum 3 to 4 times a day."; break;
-                case 'ibu_200_5': 
-                    strengthMg = 200; strengthMl = 5; doseMgPerKg = 10; unit = "mL"; 
-                    instructions = "Give every 6 to 8 hours. Maximum 3 to 4 times a day."; break;
-            }
-            
-            // Formula Execution
-            const totalMg = weight * doseMgPerKg;
-            const totalMl = (totalMg / strengthMg) * strengthMl;
-            
-            // Round to 2 decimal places exactly like the Android app
-            const roundedMg = Math.round(totalMg * 100) / 100;
-            const roundedMl = Math.round(totalMl * 100) / 100;
-            
-            // Render Results
-            document.getElementById('resName').textContent = name;
-            document.getElementById('resMl').textContent = roundedMl;
-            document.getElementById('resUnit').textContent = unit;
-            document.getElementById('resMg').textContent = roundedMg;
-            document.getElementById('resInstructions').textContent = instructions;
-            
-            // Show the card
-            document.getElementById('resultCard').classList.remove('hidden');
-        });
-    </script>
 </body>
 </html>
